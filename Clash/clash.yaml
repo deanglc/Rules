@@ -1,0 +1,240 @@
+# refer-star1.7k: https://github.com/ConnersHua/Profiles   111111
+port: 1087
+socks-port: 1086
+redir-port: 7892
+mixed-port: 7890
+allow-lan: true
+bind-address: '*'
+mode: rule
+log-level: info
+ipv6: false
+external-controller: 127.0.0.1:9090
+
+hosts:
+  'mtalk.google.com': 108.177.125.188
+  "dns.alidns.com": 223.5.5.5
+  'local.right.de': 127.0.0.1
+  'router.asus.com': 192.168.50.1
+
+dns:
+  enable: true
+  listen: 0.0.0.0:53
+  ipv6: false # when false, response to AAAA questions will be empty
+  default-nameserver:
+    - 223.6.6.6
+    - 114.114.114.114
+    - 119.29.29.29
+    - 8.8.8.8
+  enhanced-mode: redir-host
+  #  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16 # Fake IP addresses pool CIDR
+  nameserver:
+    - 223.6.6.6 # default value
+    - 8.8.8.8 # default value
+    - https://dns.alidns.com/dns-query # DNS over HTTPS
+    - tls://dns.rubyfish.cn:853 # DNS over TLS
+
+  fallback:
+    - 77.88.8.88
+    - 208.67.222.222
+    - https://dns.adguard.com/dns-query
+    - tls://dns.google:853
+
+  fallback-filter:
+    geoip: true
+    ipcidr:
+    # - 240.0.0.0/4
+tun:
+  enable: true
+  stack: system
+  macOS-auto-route: true
+  macOS-auto-detect-interface: true
+  dns-hijack:
+  # - 8.8.8.8:1053
+  # - tcp://8.8.8.8:53
+proxies:
+
+proxy-providers:
+  cord-sub:
+    type: file
+    path: ./ss-v2/cord-sub.yaml
+    health-check:
+      enable: true
+      url: http://www.gstatic.com/generate_204
+      #      url: http://cp.cloudflare.com/generate_204
+      interval: 120
+  ss-v2:
+    type: file
+    path: ./ss-v2/ss-v2.yaml
+    health-check:
+      enable: true
+      url: http://www.gstatic.com/generate_204
+      #      url: http://cp.cloudflare.com/generate_204
+      interval: 7200
+  test:
+    type: file
+    path: ./ss-v2/test.yaml
+    health-check:
+      enable: true
+      url: http://www.gstatic.com/generate_204
+      #      url: http://cp.cloudflare.com/generate_204
+      interval: 7200
+
+
+proxy-groups:
+  - name: "🎯 DIRECT"
+    type: select
+    proxies:
+      - DIRECT
+
+  - name: "♻️ 自动选择"
+    type: url-test
+    proxies:
+    use: ["cord-sub",]
+    #    url: 'http://www.gstatic.com/generate_204'
+    url: http://cp.cloudflare.com/generate_204
+    interval: 7200
+
+  # 代理节点选择
+  - name: "✈️ PROXY"
+    type: select
+    proxies: ["♻️ 自动选择"]
+    use:
+      - cord-sub
+      - ss-v2
+      - test
+
+  # 白名单模式 黑名单模式
+  - name: "🐟 漏网之鱼"
+    type: select
+    proxies: ["🎯 DIRECT","♻️ 自动选择","✈️ PROXY"]
+
+  - name: "🍎 微软苹果"
+    type: select
+    proxies: ["🎯 DIRECT","♻️ 自动选择","✈️ PROXY"]
+
+  - name: "☝️ 呸呸额B"
+    type: select
+    proxies: ["✈️ PROXY"]
+    use: ["ss-v2",]
+
+  - name: "📺 Streaming"
+    type: select
+    proxies: ["♻️ 自动选择","✈️ PROXY"]
+
+  - name: "🚫 属实没🐴"
+    type: select
+    proxies: ["REJECT","🎯 DIRECT","♻️ 自动选择","✈️ PROXY"]
+
+
+rule-providers:
+  Unbreak:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Unbreak.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/Unbreak.yaml
+    interval: 86400
+
+  Streaming:
+    type: http
+    behavior: classical
+    path: ./RuleSet/StreamingMedia/Streaming.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/StreamingMedia/Streaming.yaml
+    interval: 86400
+
+  Global:
+    type: http
+    behavior: classical
+    path: ./RuleSet/Global.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/Global.yaml
+    interval: 86400
+
+  China:
+    type: http
+    behavior: classical
+    path: ./RuleSet/China.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/China.yaml
+    interval: 86400
+
+  ChinaIP:
+    type: http
+    behavior: ipcidr
+    path: ./RuleSet/Extra/ChinaIP.yaml
+    url: https://raw.githubusercontent.com/DivineEngine/Profiles/master/Clash/RuleSet/Extra/ChinaIP.yaml
+    interval: 86400
+  # 自己增加 lhie1的AdBlock
+  Hijack:
+    type: file
+    behavior: classical
+    path: ./ss-v2/hijack.list
+
+  Ms-apple:
+    type: file
+    behavior: classical
+    path: ./ss-v2/ms-apple-list.yaml
+
+  PPEB:
+    type: file
+    behavior: classical
+    path: ./ss-v2/paypal-eb-list.yaml
+
+
+# 规则
+rules:
+  - DOMAIN,ntt-co-jp.club,DIRECT
+
+  # Hijack
+  - RULE-SET,Hijack,🚫 属实没🐴
+
+  # Unbreak
+  - RULE-SET,Unbreak,DIRECT
+
+  # Global Area Network
+
+  # (Streaming Media)
+  - RULE-SET,Streaming,📺 Streaming
+
+  # 🍎微软苹果
+  - RULE-SET,Ms-apple,🍎 微软苹果
+
+  # ☝️ 呸呸额B
+  - RULE-SET,PPEB,☝️ 呸呸额B
+
+  # (DNS Cache Pollution) / (IP Blackhole) / (Region-Restricted Access Denied) / (Network Jitter)
+  - RULE-SET,Global,✈️ PROXY
+
+  # China Area Network
+  - RULE-SET,China,DIRECT
+  #
+  #  # Local Area Network
+  - DOMAIN-SUFFIX,local,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,17.0.0.0/8,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT
+  - IP-CIDR,224.0.0.0/4,DIRECT
+
+  # （可选）使用来自 ipipdotnet 的 ChinaIP 以解决数据不准确的问题，使用 ChinaIP.yaml 时可禁用下列直至（包括）「GEOIP,CN」规则
+  # - RULE-SET,ChinaIP,🎯 DIRECT
+  # Tencent
+  - IP-CIDR,119.28.28.28/32,DIRECT
+  - IP-CIDR,182.254.116.0/24,DIRECT
+
+
+  - IP-CIDR,17.0.0.0/8,🍎 微软苹果
+  - IP-CIDR,63.92.224.0/19,🍎 微软苹果
+  - IP-CIDR,65.199.22.0/23,🍎 微软苹果
+  - IP-CIDR,139.178.128.0/18,🍎 微软苹果
+  - IP-CIDR,144.178.0.0/19,🍎 微软苹果
+  - IP-CIDR,144.178.36.0/22,🍎 微软苹果
+  - IP-CIDR,144.178.48.0/20,🍎 微软苹果
+  - IP-CIDR,192.35.50.0/24,🍎 微软苹果
+  - IP-CIDR,198.183.17.0/24,🍎 微软苹果
+  - IP-CIDR,205.180.175.0/24,🍎 微软苹果
+  # GeoIP China
+  - GEOIP,CN,DIRECT
+  - MATCH,🐟 漏网之鱼
+
+
