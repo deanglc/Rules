@@ -19,10 +19,10 @@ host-suffix,nhncorp.jp,🌍 国外网站
 host-suffix,skype.com,🌍 国外网站
 host-suffix,storage.live.com,🌍 国外网站
 # > PayPal
-user-agent,PayPal*,🌍 国外网站
-host-keyword,paypal,🌍 国外网站
-host-suffix,paypal.com,🌍 国外网站
-host-suffix,paypalobjects.com,🌍 国外网站
+#user-agent,PayPal*,🌍 国外网站
+#host-keyword,paypal,🌍 国外网站
+#host-suffix,paypal.com,🌍 国外网站
+#host-suffix,paypalobjects.com,🌍 国外网站
 # > Pornhub
 host-suffix,phncdn.com,🌍 国外网站
 host-suffix,phprcdn.com,🌍 国外网站
