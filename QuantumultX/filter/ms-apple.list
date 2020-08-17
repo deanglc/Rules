@@ -105,7 +105,7 @@ host-suffix,xbox.com,🍎 微软苹果
 host-suffix,xboxlive.com,🍎 微软苹果
 
 # todo 不行就改成🍎 微软苹果
-ip-cidr,17.0.0.0/8,no-resolve
+ip-cidr,17.0.0.0/8,🍎 微软苹果
 ip-cidr,63.92.224.0/19,no-resolve
 ip-cidr,65.199.22.0/23,no-resolve
 ip-cidr,139.178.128.0/18,no-resolve
