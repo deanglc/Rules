@@ -1,0 +1,9 @@
+# > PayPal
+# - USER-AGENT,PayPal*,PayPal
+user-agent, ?PayPal*,☝️ PPEB
+host-keyword,paypal,☝️ PPEB
+host-suffix,paypal.com,☝️ PPEB
+host-suffix,paypalobjects.com,☝️ PPEB
+# Ebay
+host-keyword,ebay,☝️ PPEB
+host-suffix,ebay.com,☝️ PPEB

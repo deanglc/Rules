@@ -1,0 +1,9 @@
+payload:
+  # > PayPal
+  # - USER-AGENT,PayPal*,PayPal
+  - DOMAIN-KEYWORD,paypal
+  - DOMAIN-SUFFIX,paypal.com
+  - DOMAIN-SUFFIX,paypalobjects.com
+  # Ebay
+  - DOMAIN-KEYWORD,ebay
+  - DOMAIN-SUFFIX,ebay.com
